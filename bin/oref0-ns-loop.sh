@@ -92,9 +92,9 @@ function completed_recently {
 }
 
 function glucose_fresh {
-    # check whether ns-glucose.json is less than 5m old
+    # check whether ns-glucose.json is less than 2m old
     touch -d "$(date -R -d @$(jq .[0].date/1000 cgm/ns-glucose.json))" cgm/ns-glucose.json
-    file_is_recent cgm/ns-glucose.json
+    file_is_recent cgm/ns-glucose.json 2
 }
 
 function find_valid_ns_glucose {

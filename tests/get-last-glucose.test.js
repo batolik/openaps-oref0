@@ -34,6 +34,23 @@ describe('getLastGlucose', function ( ) {
       var glucose_status = getLastGlucose([{dateString: "2019-12-04T08:54:19.288-0800", sgv: 100}, {date: 1467942544500, sgv: 95}, {date: 1467942244000, sgv: 85}, {date: 1467941944000, sgv: 70}]);
       glucose_status.date.should.equal(1575478459288);
     });
+    it('should keep the newest timestamp on a 1-minute CGM stream', function () {
+      var newest = 1791458412473;
+      var data = [];
+      for (var i = 0; i < 25; i++) {
+        data.push({
+          date: newest - i * 60 * 1000,
+          sgv: 100 + i,
+          device: 'xDrip-LibreReceiver'
+        });
+      }
+      var glucose_status = getLastGlucose(data);
+      glucose_status.date.should.equal(newest);
+      // only the readings within 2.5m of the newest sample are averaged (100, 101, 102)
+      glucose_status.glucose.should.equal(101.25);
+      glucose_status.delta.should.be.below(0);
+      glucose_status.delta.should.be.above(-10);
+    });
     it('should skip meter BG', function () {
       var glucose_status = getLastGlucose([{date: 1467942845000, glucose: null, mbg: 100}, {date: 1467942544500, sgv: 95}, {date: 1467942244000, sgv: 85}, {date: 1467941944000, sgv: 70}]);
       //console.log(glucose_status);

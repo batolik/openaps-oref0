@@ -59,7 +59,9 @@ var oref0_get_ns_engtires = function oref0_get_ns_engtires(argv_params, print_ca
   var records = 1000;
 
   if (hours > 0) {
-    records = 12 * hours;
+    // 60 samples/hour covers 1-minute CGM. 12 was one sample every 5 minutes
+    // and left holes in the merged glucose file.
+    records = 60 * hours;
   }
 
   if (!glucose_input || !nsurl || !apisecret) {
